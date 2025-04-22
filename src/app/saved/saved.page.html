@@ -4,26 +4,41 @@
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
     <ion-title>⭐ Saved Recipes</ion-title>
-    <ion-buttons slot="end">
-      <ion-button fill="clear" color="danger" (click)="clearAll()">
-        🗑️ Clear All
-      </ion-button>
-    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
-  <ion-grid>
+  <ion-grid class="centered-grid">
     <ion-row>
-      <ion-col size="12" size-sm="6" size-md="4" *ngFor="let meal of savedMeals">
-        <ion-card (click)="openRecipeModal(meal.idMeal)">
-          <img [src]="meal.strMealThumb" />
-          <ion-card-header>
-            <ion-card-title>{{ meal.strMeal }}</ion-card-title>
-          </ion-card-header>
-          <ion-card-content>
-            <p><strong>Category:</strong> {{ meal.strCategory }}</p>
-          </ion-card-content>
+      <ion-col size="12" *ngFor="let meal of savedMeals">
+        <ion-card class="recipe-card">
+          <ion-row>
+            <ion-col size="12" size-md="4">
+              <img [src]="meal.strMealThumb" class="recipe-img" />
+            </ion-col>
+
+            <ion-col size="12" size-md="8" class="recipe-details">
+              <ion-card-header>
+                <ion-card-title>{{ meal.strMeal }}</ion-card-title>
+              </ion-card-header>
+
+              <ion-card-content>
+                <p><strong>Category:</strong> {{ meal.strCategory }}</p>
+                <p class="description">
+                  {{ meal.strInstructions | slice:0:150 }}...
+                </p>
+
+                <ion-button
+                  *ngIf="meal.strYoutube"
+                  fill="outline"
+                  color="danger"
+                  target="_blank"
+                  [href]="meal.strYoutube">
+                  ▶ Watch Video
+                </ion-button>
+              </ion-card-content>
+            </ion-col>
+          </ion-row>
         </ion-card>
       </ion-col>
     </ion-row>
