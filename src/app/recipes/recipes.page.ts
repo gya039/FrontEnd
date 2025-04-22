@@ -58,4 +58,22 @@ export class RecipesPage implements OnInit {
     });
     await modal.present();
   }
+  toggleSave(meal: any) {
+    const saved = JSON.parse(localStorage.getItem('ezchef-favourites') || '[]');
+    const exists = saved.find((r: any) => r.idMeal === meal.idMeal);
+  
+    if (exists) {
+      const updated = saved.filter((r: any) => r.idMeal !== meal.idMeal);
+      localStorage.setItem('ezchef-favourites', JSON.stringify(updated));
+    } else {
+      saved.push(meal);
+      localStorage.setItem('ezchef-favourites', JSON.stringify(saved));
+    }
+  }
+  
+  isSaved(idMeal: string): boolean {
+    const saved = JSON.parse(localStorage.getItem('ezchef-favourites') || '[]');
+    return saved.some((r: any) => r.idMeal === idMeal);
+  }
+  
 }
