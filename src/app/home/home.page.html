@@ -1,20 +1,21 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>
-      EzChef
-    </ion-title>
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>EzChef</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content class="ion-padding">
 
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
+  <div class="welcome-banner">
+    <img src="https://source.unsplash.com/800x400/?cooking,kitchen" alt="Cooking banner" />
   </div>
+
+  <h1 class="welcome-text">Welcome, Chef! 👨‍🍳</h1>
+  <p class="sub-text">Let’s help you whip up something delicious.</p>
+
+  <ion-button expand="block" size="large" [routerLink]="['/recipes']" color="success">
+    🍽️ Browse Recipes
+  </ion-button>
+  
+
 </ion-content>

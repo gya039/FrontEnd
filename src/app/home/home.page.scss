@@ -25,3 +25,24 @@
 #container a {
   text-decoration: none;
 }
+.welcome-banner img {
+  width: 100%;
+  border-radius: 20px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  margin-bottom: 20px;
+}
+
+.welcome-text {
+  font-size: 1.8rem;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
+
+.sub-text {
+  font-size: 1.1rem;
+  text-align: center;
+  color: #666;
+  margin-bottom: 30px;
+}
