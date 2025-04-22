@@ -1,0 +1,35 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>⭐ Saved Recipes</ion-title>
+    <ion-buttons slot="end">
+      <ion-button fill="clear" color="danger" (click)="clearAll()">
+        🗑️ Clear All
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-grid>
+    <ion-row>
+      <ion-col size="12" size-sm="6" size-md="4" *ngFor="let meal of savedMeals">
+        <ion-card (click)="openRecipeModal(meal.idMeal)">
+          <img [src]="meal.strMealThumb" />
+          <ion-card-header>
+            <ion-card-title>{{ meal.strMeal }}</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <p><strong>Category:</strong> {{ meal.strCategory }}</p>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+
+  <div *ngIf="savedMeals.length === 0" class="empty">
+    <p>🤷 No saved recipes yet!</p>
+  </div>
+</ion-content>
