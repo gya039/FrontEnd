@@ -29,7 +29,7 @@
   </div>
 
   <!-- Recipe Cards/Thumbs-->
-  <ion-card *ngFor="let meal of meals">
+  <ion-card *ngFor="let meal of meals" (click)="openRecipeModal(meal.idMeal)">
     <img [src]="meal.strMealThumb" />
     <ion-card-header>
       <ion-card-title>{{ meal.strMeal }}</ion-card-title>
@@ -37,5 +37,5 @@
     <ion-card-content>
       <p><strong>Category:</strong> {{ meal.strCategory || selectedCategory }}</p>
     </ion-card-content>
-  </ion-card>
+  </ion-card>  
 </ion-content>

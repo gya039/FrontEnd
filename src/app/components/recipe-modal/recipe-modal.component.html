@@ -1,0 +1,29 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>{{ meal?.strMeal }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="closeModal()">Close</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content *ngIf="meal" class="ion-padding modal-content">
+
+  <img [src]="meal.strMealThumb" alt="{{ meal.strMeal }}" class="meal-image" />
+
+  <h2 class="section-title">🧂 Ingredients</h2>
+  <ul class="ingredients-list">
+    <li *ngFor="let item of getIngredients()">{{ item }}</li>
+  </ul>
+
+  <h2 class="section-title">📖 Instructions</h2>
+  <p class="instructions">{{ meal.strInstructions }}</p>
+
+  <div *ngIf="meal.strYoutube" class="video-section">
+    <h2 class="section-title">🎥 Video</h2>
+    <ion-button expand="block" fill="outline" color="dark" [href]="meal.strYoutube" target="_blank">
+      Watch on YouTube
+    </ion-button>
+  </div>
+  
+</ion-content>
