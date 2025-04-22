@@ -7,21 +7,35 @@
 <ion-content class="ion-padding">
   <h2 class="heading">Discover Real Recipes 👨‍🍳</h2>
 
-  <ion-grid>
-    <ion-row>
-      <ion-col size="12" size-md="6" size-lg="4" *ngFor="let meal of meals">
-        <ion-card>
-          <img [src]="meal.strMealThumb" />
-          <ion-card-header>
-            <ion-card-title>{{ meal.strMeal }}</ion-card-title>
-          </ion-card-header>
-          <ion-card-content>
-            <p><strong>Category:</strong> {{ meal.strCategory }}</p>
-            <p><strong>Area:</strong> {{ meal.strArea }}</p>
-            <p><strong>Tags:</strong> {{ meal.strTags || 'None' }}</p>
-          </ion-card-content>
-        </ion-card>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+  <!-- Used for filter -->
+  <div class="category-toolbar">
+    <ion-button
+      *ngFor="let cat of categories"
+      size="small"
+      shape="round"
+      fill="{{ selectedCategory === cat ? 'solid' : 'outline' }}"
+      (click)="selectCategory(cat)">
+      {{ cat }}
+    </ion-button>
+
+    <ion-button
+      size="small"
+      shape="round"
+      fill="clear"
+      color="danger"
+      (click)="selectCategory('')">
+      Clear
+    </ion-button>
+  </div>
+
+  <!-- Recipe Cards/Thumbs-->
+  <ion-card *ngFor="let meal of meals">
+    <img [src]="meal.strMealThumb" />
+    <ion-card-header>
+      <ion-card-title>{{ meal.strMeal }}</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p><strong>Category:</strong> {{ meal.strCategory || selectedCategory }}</p>
+    </ion-card-content>
+  </ion-card>
 </ion-content>
