@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonicModule, ModalController } from '@ionic/angular';
+import { IonicModule, ModalController, ToastController } from '@ionic/angular';
 import { RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { forkJoin, Observable } from 'rxjs';
@@ -13,6 +13,9 @@ interface Meal {
   strInstructions: string;
   strMealThumb: string;
   strYoutube: string;
+  showFull?: boolean;
+  showIngredients?: boolean;
+  [key: string]: any;
 }
 
 @Component({
@@ -24,8 +27,15 @@ interface Meal {
 })
 export class SavedPage implements OnInit {
   savedMeals: Meal[] = [];
+  filteredMeals: Meal[] = [];
+  savedCategories: string[] = [];
+  selectedCategory: string = '';
 
-  constructor(private modalCtrl: ModalController, private http: HttpClient) {}
+  constructor(
+    private modalCtrl: ModalController,
+    private http: HttpClient,
+    private toastCtrl: ToastController
+  ) {}
 
   ngOnInit() {
     this.loadSavedMeals();
@@ -36,20 +46,77 @@ export class SavedPage implements OnInit {
 
     if (!saved.length) {
       this.savedMeals = [];
+      this.filteredMeals = [];
+      this.savedCategories = [];
       return;
     }
 
     const fetches: Observable<{ meals: Meal[] }>[] = saved.map((meal) =>
-      this.http.get<{ meals: Meal[] }>(
-        `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${meal.idMeal}`
-      )
+      this.http.get<{ meals: Meal[] }>(`https://www.themealdb.com/api/json/v1/1/lookup.php?i=${meal.idMeal}`)
     );
 
-    forkJoin(fetches).subscribe((results: { meals: Meal[] }[]) => {
+    forkJoin(fetches).subscribe((results) => {
       this.savedMeals = results
         .map((res) => res.meals?.[0])
-        .filter((meal): meal is Meal => !!meal);
+        .filter((meal): meal is Meal => !!meal)
+        .map((meal) => ({
+          ...meal,
+          showFull: false,
+          showIngredients: false,
+        }));
+
+      this.savedCategories = [...new Set(this.savedMeals.map(m => m.strCategory).filter(Boolean))];
+      this.filterByCategory(); // initialize filteredMeals
     });
+  }
+
+  filterByCategory() {
+    this.filteredMeals = this.selectedCategory
+      ? this.savedMeals.filter(m => m.strCategory === this.selectedCategory)
+      : [...this.savedMeals];
+  }
+
+  toggleInstructions(mealId: string) {
+    const meal = this.savedMeals.find(m => m.idMeal === mealId);
+    if (meal) meal.showFull = !meal.showFull;
+  }
+
+  toggleIngredients(mealId: string) {
+    const meal = this.savedMeals.find(m => m.idMeal === mealId);
+    if (meal) meal.showIngredients = !meal.showIngredients;
+  }
+
+  getIngredients(meal: Meal): string[] {
+    const ingredients: string[] = [];
+    for (let i = 1; i <= 20; i++) {
+      const ingredient = meal[`strIngredient${i}`];
+      const measure = meal[`strMeasure${i}`];
+      if (ingredient && ingredient.trim()) {
+        ingredients.push(`${measure?.trim() || ''} ${ingredient.trim()}`.trim());
+      }
+    }
+    return ingredients;
+  }
+
+  async removeFromSaved(mealId: string) {
+    this.savedMeals = this.savedMeals.filter(m => m.idMeal !== mealId);
+    const updated = this.savedMeals.map(m => ({ idMeal: m.idMeal }));
+    localStorage.setItem('ezchef-favourites', JSON.stringify(updated));
+
+    this.savedCategories = [...new Set(this.savedMeals.map(m => m.strCategory).filter(Boolean))];
+    if (!this.savedCategories.includes(this.selectedCategory)) {
+      this.selectedCategory = '';
+    }
+
+    this.filterByCategory(); // update visible list
+
+    const toast = await this.toastCtrl.create({
+      message: 'Recipe removed from saved 🍽️',
+      duration: 2000,
+      color: 'danger',
+      position: 'bottom',
+    });
+    toast.present();
   }
 
   async openRecipeModal(mealId: string) {
@@ -63,5 +130,8 @@ export class SavedPage implements OnInit {
   clearAll() {
     localStorage.removeItem('ezchef-favourites');
     this.savedMeals = [];
+    this.filteredMeals = [];
+    this.savedCategories = [];
+    this.selectedCategory = '';
   }
 }
