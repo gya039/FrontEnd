@@ -15,10 +15,24 @@ import { RecipeModalComponent } from '../components/recipe-modal/recipe-modal.co
 export class HomePage implements OnInit {
   recentSaved: any[] = [];
   recipeOfTheDay: any = null;
+  cookingTipOfTheDay: string = '';
+
+  private cookingTips: string[] = [
+    '🔥 Always let your meat rest before slicing to retain juices.',
+    '🧂 Salt your pasta water like the sea—it’s the only chance to season it.',
+    '🍳 Use a non-stick pan for eggs and pancakes for the best results.',
+    '🧄 Smash garlic cloves with a knife to peel them easier.',
+    '🌽 Grate cold butter for easier spreading or melting.',
+    '🍞 Store bread in a paper bag, not plastic, to prevent sogginess.',
+    '🍅 Add a pinch of sugar to tomato sauces to balance acidity.',
+    '🧈 Butter should be room temperature for smoother baking.'
+  ];
 
   constructor(private http: HttpClient, private modalCtrl: ModalController) {}
 
   ngOnInit() {
+    this.setRandomCookingTip();
+
     try {
       const saved = localStorage.getItem('ezchef-favourites');
       if (saved) {
@@ -43,10 +57,7 @@ export class HomePage implements OnInit {
               this.fetchMealDetails(random.idMeal).then(fullMeal => {
                 if (fullMeal) {
                   this.recipeOfTheDay = fullMeal;
-                  localStorage.setItem(
-                    'ezchef-rotod',
-                    JSON.stringify({ date: today, recipe: fullMeal })
-                  );
+                  localStorage.setItem('ezchef-rotod', JSON.stringify({ date: today, recipe: fullMeal }));
                 }
               });
             }
@@ -56,6 +67,11 @@ export class HomePage implements OnInit {
     } catch (error) {
       console.error('Failed to load saved recipes:', error);
     }
+  }
+
+  private setRandomCookingTip() {
+    const index = Math.floor(Math.random() * this.cookingTips.length);
+    this.cookingTipOfTheDay = this.cookingTips[index];
   }
 
   async fetchMealDetails(idMeal: string): Promise<any> {
@@ -72,15 +88,14 @@ export class HomePage implements OnInit {
 
   async openRecipeModal(idMeal: string | undefined) {
     if (!idMeal) return;
-  
+
     const modal = await this.modalCtrl.create({
       component: RecipeModalComponent,
       componentProps: {
-        mealId: idMeal, 
+        mealId: idMeal,
       },
     });
-  
+
     await modal.present();
   }
-  
 }

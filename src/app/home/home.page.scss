@@ -1,4 +1,8 @@
 :host {
+  ion-toolbar {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
   ion-content {
     --background: transparent !important;
     position: relative;
@@ -51,7 +55,8 @@
     left: 20px;
     width: 280px;
     max-height: 75vh;
-    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+    background: rgba(255, 255, 255, 0.8);
     border-radius: 16px;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
     display: flex;
@@ -127,15 +132,16 @@
     }
   }
 
-  .recipe-day {
+  .recipe-day,
+  .cooking-tip {
     margin: 30px auto;
     padding: 20px;
     max-width: 600px;
-    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(8px);
+    background: rgba(255, 255, 255, 0.8);
     border-radius: 16px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     text-align: center;
-    cursor: pointer;
     transition: transform 0.25s ease;
 
     &:hover {
@@ -147,19 +153,26 @@
       margin-bottom: 12px;
       color: #333;
     }
+  }
 
-    .recipe-day-card {
-      img {
-        width: 100%;
-        height: 200px;
-        object-fit: cover;
-        border-radius: 12px 12px 0 0;
-      }
+  .tip-day p {
+    font-size: 1rem;
+    color: #555;
+    margin: 0;
+    line-height: 1.5;
+  }
 
-      ion-card-title {
-        font-size: 1.1rem;
-        padding: 0 10px;
-      }
+  .recipe-day-card {
+    img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 12px 12px 0 0;
+    }
+
+    ion-card-title {
+      font-size: 1.1rem;
+      padding: 0 10px;
     }
   }
 }

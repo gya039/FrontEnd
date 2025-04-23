@@ -38,6 +38,14 @@
       </ion-card-header>
     </ion-card>
   </div>
+  <div class="cooking-tip" *ngIf="cookingTipOfTheDay">
+    <h2>🍳 Cooking Tip of the Day</h2>
+    <ion-card class="tip-card">
+      <ion-card-content>
+        {{ cookingTipOfTheDay }}
+      </ion-card-content>
+    </ion-card>
+  </div>
 
   <ion-button expand="block" size="large" color="success" routerLink="/recipes">
     🍽️ Browse Recipes
