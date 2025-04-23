@@ -15,8 +15,10 @@ interface Meal {
   strYoutube: string;
   showFull?: boolean;
   showIngredients?: boolean;
+  removing?: boolean;
   [key: string]: any;
 }
+
 
 @Component({
   selector: 'app-saved',
@@ -66,10 +68,13 @@ export class SavedPage implements OnInit {
         }));
 
       this.savedCategories = [...new Set(this.savedMeals.map(m => m.strCategory).filter(Boolean))];
-      this.filterByCategory(); // initialize filteredMeals
+      this.filterByCategory(); 
     });
   }
-
+  getCategoryCount(category: string): number {
+    return this.savedMeals.filter(m => m.strCategory === category).length;
+  }
+  
   filterByCategory() {
     this.filteredMeals = this.selectedCategory
       ? this.savedMeals.filter(m => m.strCategory === this.selectedCategory)
@@ -99,17 +104,21 @@ export class SavedPage implements OnInit {
   }
 
   async removeFromSaved(mealId: string) {
+    // Remove from array instantly to prevent a blank "Card" 
     this.savedMeals = this.savedMeals.filter(m => m.idMeal !== mealId);
+    this.filteredMeals = this.savedMeals.filter(
+      m => !this.selectedCategory || m.strCategory === this.selectedCategory
+    );
+  
     const updated = this.savedMeals.map(m => ({ idMeal: m.idMeal }));
     localStorage.setItem('ezchef-favourites', JSON.stringify(updated));
-
+  
     this.savedCategories = [...new Set(this.savedMeals.map(m => m.strCategory).filter(Boolean))];
     if (!this.savedCategories.includes(this.selectedCategory)) {
       this.selectedCategory = '';
+      this.filteredMeals = this.savedMeals; 
     }
-
-    this.filterByCategory(); // update visible list
-
+  
     const toast = await this.toastCtrl.create({
       message: 'Recipe removed from saved 🍽️',
       duration: 2000,
@@ -118,6 +127,7 @@ export class SavedPage implements OnInit {
     });
     toast.present();
   }
+  
 
   async openRecipeModal(mealId: string) {
     const modal = await this.modalCtrl.create({

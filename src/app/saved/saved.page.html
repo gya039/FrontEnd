@@ -7,102 +7,99 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
-  <!-- Category Filters -->
-  <div class="category-toolbar" *ngIf="savedCategories.length">
-    <ion-button
-      *ngFor="let cat of savedCategories"
-      size="small"
-      shape="round"
-      [fill]="selectedCategory === cat ? 'solid' : 'outline'"
-      (click)="selectedCategory = cat; filterByCategory()">
-      {{ cat }}
-    </ion-button>
+<div class="category-toolbar" *ngIf="savedCategories.length">
+  <ion-button
+    *ngFor="let cat of savedCategories"
+    size="small"
+    shape="round"
+    [fill]="selectedCategory === cat ? 'solid' : 'outline'"
+    (click)="selectedCategory = cat; filterByCategory()">
+    {{ cat }} ({{ getCategoryCount(cat) }})
+  </ion-button>
 
-    <ion-button
-      size="small"
-      shape="round"
-      fill="clear"
-      color="medium"
-      (click)="selectedCategory = ''; filterByCategory()">
-      Show All
-    </ion-button>
-  </div>
+  <ion-button
+    size="small"
+    shape="round"
+    fill="clear"
+    color="medium"
+    (click)="selectedCategory = ''; filterByCategory()">
+    Show All
+  </ion-button>
+</div>
 
-  <!-- Recipe Cards -->
-  <ion-grid class="centered-grid">
-    <ion-row>
-      <ion-col size="12" *ngFor="let meal of filteredMeals">
-        <ion-card class="recipe-card">
-          <ion-row>
-            <ion-col size="12" size-md="4">
-              <img [src]="meal.strMealThumb" class="recipe-img" />
-            </ion-col>
+<ion-content class="saved-content">
+  <div class="content-wrapper">
+    <ion-grid class="centered-grid">
+      <ion-row>
+        <ion-col size="12" *ngFor="let meal of filteredMeals">
+          <ion-card class="recipe-card" [ngClass]="{ 'removing': meal['removing'] }">
+            <ion-row>
+              <ion-col size="12" size-md="4">
+                <img [src]="meal.strMealThumb" class="recipe-img" />
+              </ion-col>
 
-            <ion-col size="12" size-md="8" class="recipe-details">
-              <ion-card-header class="card-header-flex">
-                <ion-card-title>{{ meal.strMeal }}</ion-card-title>
-                <ion-button
-                  fill="clear"
-                  color="danger"
-                  size="small"
-                  (click)="removeFromSaved(meal.idMeal)">
-                  🗑Remove
-                </ion-button>
-              </ion-card-header>
+              <ion-col size="12" size-md="8" class="recipe-details">
+                <ion-card-header class="card-header-flex">
+                  <ion-card-title>{{ meal.strMeal }}</ion-card-title>
+                  <ion-button
+                    fill="outline"
+                    color="danger"
+                    size="default"
+                    class="remove-btn"
+                    (click)="removeFromSaved(meal.idMeal)">
+                    🗑 Remove
+                  </ion-button>
+                </ion-card-header>
 
-              <ion-card-content>
-                <p><strong>Category:</strong> {{ meal.strCategory }}</p>
+                <ion-card-content>
+                  <p><strong>Category:</strong> {{ meal.strCategory }}</p>
 
-                <!-- Instructions -->
-                <ul *ngIf="meal.showFull" class="instruction-list">
-                  <li *ngFor="let sentence of meal.strInstructions.split('. ')">
-                    {{ sentence.trim() }}.
-                  </li>
-                </ul>
+                  <ul *ngIf="meal.showFull" class="instruction-list">
+                    <li *ngFor="let sentence of meal.strInstructions.split('. ')">
+                      {{ sentence.trim() }}.
+                    </li>
+                  </ul>
 
-                <p class="description" *ngIf="!meal.showFull">
-                  {{ meal.strInstructions | slice: 0:150 }}...
-                </p>
+                  <p class="description" *ngIf="!meal.showFull">
+                    {{ meal.strInstructions | slice: 0:150 }}...
+                  </p>
 
-                <a (click)="toggleInstructions(meal.idMeal)" class="toggle-link">
-                  {{ meal.showFull ? 'See Less ▲' : 'See More ▼' }}
-                </a>
+                  <a (click)="toggleInstructions(meal.idMeal)" class="toggle-link">
+                    {{ meal.showFull ? 'See Less ▲' : 'See More ▼' }}
+                  </a>
 
-                <!-- Ingredients -->
-                <ion-button
-                  fill="outline"
-                  size="small"
-                  color="medium"
-                  (click)="toggleIngredients(meal.idMeal)">
-                  🧂 {{ meal.showIngredients ? 'Hide Ingredients' : 'Show Ingredients' }}
-                </ion-button>
+                  <ion-button
+                    fill="outline"
+                    size="small"
+                    color="medium"
+                    (click)="toggleIngredients(meal.idMeal)">
+                    🧂 {{ meal.showIngredients ? 'Hide Ingredients' : 'Show Ingredients' }}
+                  </ion-button>
 
-                <ul *ngIf="meal.showIngredients" class="ingredient-list">
-                  <li *ngFor="let item of getIngredients(meal)">
-                    • {{ item }}
-                  </li>
-                </ul>
+                  <ul *ngIf="meal.showIngredients" class="ingredient-list">
+                    <li *ngFor="let item of getIngredients(meal)">
+                      • {{ item }}
+                    </li>
+                  </ul>
 
-                <!-- YouTube Link -->
-                <ion-button
-                  *ngIf="meal.strYoutube"
-                  fill="outline"
-                  color="danger"
-                  target="_blank"
-                  [href]="meal.strYoutube">
-                  ▶ Watch Video
-                </ion-button>
-              </ion-card-content>
-            </ion-col>
-          </ion-row>
-        </ion-card>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+                  <ion-button
+                    *ngIf="meal.strYoutube"
+                    fill="outline"
+                    color="danger"
+                    target="_blank"
+                    [href]="meal.strYoutube">
+                    ▶ Watch Video
+                  </ion-button>
+                </ion-card-content>
+              </ion-col>
+            </ion-row>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
 
-  <!-- No Results -->
-  <div *ngIf="filteredMeals.length === 0" class="empty">
-    <p>🤷 No saved recipes found for this category!</p>
+    <div *ngIf="filteredMeals.length === 0" class="empty">
+      <p>🤷 No saved recipes found for this category!</p>
+    </div>
   </div>
 </ion-content>
