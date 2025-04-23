@@ -12,7 +12,6 @@
 <ion-content class="ion-padding">
   <h2 class="heading">Discover Real Recipes 👨‍🍳</h2>
 
-  <!-- Filter buttons -->
   <div class="category-toolbar">
     <ion-button
       *ngFor="let cat of categories"
@@ -32,25 +31,28 @@
       Clear
     </ion-button>
   </div>
-
-  <!-- Recipe Cards -->
-  <ion-card *ngFor="let meal of meals" (click)="openRecipeModal(meal.idMeal)">
-    <img [src]="meal.strMealThumb" />
-    <ion-card-header>
-      <div class="card-title-row">
-        <ion-card-title>{{ meal.strMeal }}</ion-card-title>
-        <ion-button
-          class="save-button"
-          fill="clear"
-          size="small"
-          (click)="toggleSave(meal); $event.stopPropagation()">
-          {{ isSaved(meal.idMeal) ? '⭐' : '➕' }}
-        </ion-button>
-      </div>
-    </ion-card-header>
-
-    <ion-card-content>
-      <p><strong>Category:</strong> {{ meal.strCategory || selectedCategory }}</p>
-    </ion-card-content>
-  </ion-card>
+  <ion-grid>
+    <ion-row>
+      <ion-col size="12" size-md="6" size-lg="4" *ngFor="let meal of meals">
+        <ion-card (click)="openRecipeModal(meal.idMeal)">
+          <img [src]="meal.strMealThumb" />
+          <ion-card-header>
+            <div class="card-title-row">
+              <ion-card-title>{{ meal.strMeal }}</ion-card-title>
+              <ion-button
+                class="save-button"
+                fill="clear"
+                size="small"
+                (click)="toggleSave(meal); $event.stopPropagation()">
+                {{ isSaved(meal.idMeal) ? '⭐' : '➕' }}
+              </ion-button>
+            </div>
+          </ion-card-header>
+          <ion-card-content>
+            <p><strong>Category:</strong> {{ meal.strCategory || selectedCategory }}</p>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 </ion-content>

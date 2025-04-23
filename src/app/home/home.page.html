@@ -7,16 +7,27 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
-
-  <div class="welcome-banner">
-    <img src="https://source.unsplash.com/800x400/?cooking,kitchen" alt="Cooking banner" />
+<ion-content class="home-content">
+  <div class="welcome-message">
+    <h1>Welcome, Chef! 👨‍🍳</h1>
+    <p>Let’s help you whip up something delicious.</p>
   </div>
 
-  <h1 class="welcome-text">Welcome, Chef! 👨‍🍳</h1>
-  <p class="sub-text">Let’s help you whip up something delicious.</p>
-
-  <ion-button expand="block" size="large" [routerLink]="['/recipes']" color="success">
+  <ion-button expand="block" size="large" color="success" routerLink="/recipes">
     🍽️ Browse Recipes
   </ion-button>
+
+  <div class="recent-section" *ngIf="recentSaved.length > 0">
+    <h2>💾 Recently Saved Recipes</h2>
+    <div class="recent-scroll-wrapper">
+      <div class="recent-scroll">
+        <ion-card *ngFor="let meal of recentSaved" class="recent-card" (click)="openRecipeModal(meal.idMeal)">
+          <img [src]="meal.strMealThumb" alt="{{ meal.strMeal }}" />
+          <ion-card-header>
+            <ion-card-title>{{ meal.strMeal }}</ion-card-title>
+          </ion-card-header>
+        </ion-card>
+      </div>
+    </div>
+  </div>
 </ion-content>
