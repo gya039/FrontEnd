@@ -1,23 +1,28 @@
 <ion-header>
   <ion-toolbar color="primary">
-    <ion-title>{{ meal?.strMeal }}</ion-title>
+    <ion-title>{{ meal?.strMeal || 'Loading...' }}</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="closeModal()">Close</ion-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content *ngIf="meal" class="ion-padding modal-content">
+<ion-content *ngIf="meal; else loading" class="ion-padding modal-content">
 
   <img [src]="meal.strMealThumb" alt="{{ meal.strMeal }}" class="meal-image" />
 
   <h2 class="section-title">🧂 Ingredients</h2>
-  <ul class="ingredients-list">
+  <ul class="ingredients-list" *ngIf="getIngredients().length > 0; else noIngredients">
     <li *ngFor="let item of getIngredients()">{{ item }}</li>
   </ul>
+  <ng-template #noIngredients>
+    <p>No ingredients found for this recipe.</p>
+  </ng-template>
 
   <h2 class="section-title">📖 Instructions</h2>
-  <p class="instructions">{{ meal.strInstructions }}</p>
+  <p class="instructions">
+    {{ meal.strInstructions || 'No instructions available for this recipe.' }}
+  </p>
 
   <div *ngIf="meal.strYoutube" class="video-section">
     <h2 class="section-title">🎥 Video</h2>
@@ -25,5 +30,11 @@
       Watch on YouTube
     </ion-button>
   </div>
-  
 </ion-content>
+
+<ng-template #loading>
+  <ion-content class="ion-padding">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p style="text-align: center;">Loading recipe details...</p>
+  </ion-content>
+</ng-template>

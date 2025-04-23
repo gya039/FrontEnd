@@ -20,5 +20,6 @@ export const routes: Routes = [
     path: 'saved',
     loadComponent: () => import('./saved/saved.page').then( m => m.SavedPage)
   },
+  
 ];
 

@@ -27,15 +27,17 @@ export class RecipeModalComponent implements OnInit {
     this.modalCtrl.dismiss();
   }
 
-  getIngredients() {
+  getIngredients(): string[] {
+    if (!this.meal) return [];
     const ingredients: string[] = [];
     for (let i = 1; i <= 20; i++) {
       const ingredient = this.meal[`strIngredient${i}`];
       const measure = this.meal[`strMeasure${i}`];
-      if (ingredient) {
-        ingredients.push(`${measure} ${ingredient}`);
+      if (ingredient && ingredient.trim()) {
+        ingredients.push(`${measure?.trim()} ${ingredient.trim()}`);
       }
     }
     return ingredients;
   }
+  
 }
