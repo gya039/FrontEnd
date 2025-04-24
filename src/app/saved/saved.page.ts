@@ -7,6 +7,7 @@ import { forkJoin, Observable } from 'rxjs';
 import { Toast } from '@capacitor/toast';
 import { Capacitor } from '@capacitor/core';
 import { RecipeModalComponent } from '../components/recipe-modal/recipe-modal.component';
+import { ShoppingListModalComponent } from '../components/shopping-list-modal/shopping-list-modal.component'; // <- new component
 
 interface Meal {
   idMeal: string;
@@ -118,7 +119,7 @@ export class SavedPage implements OnInit {
       this.selectedCategory = '';
       this.filteredMeals = this.savedMeals;
     }
-  // Same story as in recipes.page.ts.
+
     if (Capacitor.isNativePlatform()) {
       await Toast.show({ text: 'Recipe removed', duration: 'short' });
     } else {
@@ -140,5 +141,28 @@ export class SavedPage implements OnInit {
     this.filteredMeals = [];
     this.savedCategories = [];
     this.selectedCategory = '';
+  }
+
+  async generateShoppingListForMeal(meal: Meal) {
+    const ingredients = this.getIngredients(meal);
+
+    if (ingredients.length === 0) {
+      if (Capacitor.isNativePlatform()) {
+        await Toast.show({ text: 'No ingredients found for this recipe.', duration: 'short' });
+      } else {
+        alert('No ingredients found for this recipe.');
+      }
+      return;
+    }
+
+    const modal = await this.modalCtrl.create({
+      component: ShoppingListModalComponent,
+      componentProps: {
+        title: meal.strMeal,
+        ingredients: ingredients,
+      },
+    });
+
+    await modal.present();
   }
 }
