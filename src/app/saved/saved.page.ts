@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonicModule, ModalController, ToastController } from '@ionic/angular';
+import { IonicModule, ModalController } from '@ionic/angular';
 import { RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { forkJoin, Observable } from 'rxjs';
+import { Toast } from '@capacitor/toast';
+import { Capacitor } from '@capacitor/core';
 import { RecipeModalComponent } from '../components/recipe-modal/recipe-modal.component';
 
 interface Meal {
@@ -18,7 +20,6 @@ interface Meal {
   removing?: boolean;
   [key: string]: any;
 }
-
 
 @Component({
   selector: 'app-saved',
@@ -35,8 +36,7 @@ export class SavedPage implements OnInit {
 
   constructor(
     private modalCtrl: ModalController,
-    private http: HttpClient,
-    private toastCtrl: ToastController
+    private http: HttpClient
   ) {}
 
   ngOnInit() {
@@ -68,13 +68,14 @@ export class SavedPage implements OnInit {
         }));
 
       this.savedCategories = [...new Set(this.savedMeals.map(m => m.strCategory).filter(Boolean))];
-      this.filterByCategory(); 
+      this.filterByCategory();
     });
   }
+
   getCategoryCount(category: string): number {
     return this.savedMeals.filter(m => m.strCategory === category).length;
   }
-  
+
   filterByCategory() {
     this.filteredMeals = this.selectedCategory
       ? this.savedMeals.filter(m => m.strCategory === this.selectedCategory)
@@ -104,30 +105,26 @@ export class SavedPage implements OnInit {
   }
 
   async removeFromSaved(mealId: string) {
-    // Remove from array instantly to prevent a blank "Card" 
     this.savedMeals = this.savedMeals.filter(m => m.idMeal !== mealId);
     this.filteredMeals = this.savedMeals.filter(
       m => !this.selectedCategory || m.strCategory === this.selectedCategory
     );
-  
+
     const updated = this.savedMeals.map(m => ({ idMeal: m.idMeal }));
     localStorage.setItem('ezchef-favourites', JSON.stringify(updated));
-  
+
     this.savedCategories = [...new Set(this.savedMeals.map(m => m.strCategory).filter(Boolean))];
     if (!this.savedCategories.includes(this.selectedCategory)) {
       this.selectedCategory = '';
-      this.filteredMeals = this.savedMeals; 
+      this.filteredMeals = this.savedMeals;
     }
-  
-    const toast = await this.toastCtrl.create({
-      message: 'Recipe removed from saved 🍽️',
-      duration: 2000,
-      color: 'danger',
-      position: 'bottom',
-    });
-    toast.present();
+  // Same story as in recipes.page.ts.
+    if (Capacitor.isNativePlatform()) {
+      await Toast.show({ text: 'Recipe removed', duration: 'short' });
+    } else {
+      alert('Recipe removed');
+    }
   }
-  
 
   async openRecipeModal(mealId: string) {
     const modal = await this.modalCtrl.create({
