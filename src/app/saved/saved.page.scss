@@ -121,4 +121,22 @@ ion-header {
     --padding-bottom: 6px;
     height: auto;
   }
+
+  .saved-heading {
+  text-align: center;
+  padding: 1.5rem 1rem 0.5rem;
+  color: #333;
+
+  h2 {
+    font-size: 1.8rem;
+    margin-bottom: 0.2rem;
+    font-weight: 700;
+  }
+
+  p {
+    font-size: 1rem;
+    color: #666;
+  }
+}
+
   

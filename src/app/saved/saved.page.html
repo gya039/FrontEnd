@@ -7,6 +7,11 @@
   </ion-toolbar>
 </ion-header>
 
+<div class="saved-heading">
+  <h2>Your Saved Recipes ❤️</h2>
+  <p>Browse your favourite meals by category or view them all below.</p>
+</div>
+
 <div class="category-toolbar" *ngIf="savedCategories.length">
   <ion-button
     *ngFor="let cat of savedCategories"

@@ -7,7 +7,7 @@ import { forkJoin, Observable } from 'rxjs';
 import { Toast } from '@capacitor/toast';
 import { Capacitor } from '@capacitor/core';
 import { RecipeModalComponent } from '../components/recipe-modal/recipe-modal.component';
-import { ShoppingListModalComponent } from '../components/shopping-list-modal/shopping-list-modal.component'; // <- new component
+import { ShoppingListModalComponent } from '../components/shopping-list-modal/shopping-list-modal.component';
 
 interface Meal {
   idMeal: string;
@@ -54,9 +54,14 @@ export class SavedPage implements OnInit {
       return;
     }
 
+    // Fetch each saved meal’s full details from the API
     const fetches: Observable<{ meals: Meal[] }>[] = saved.map((meal) =>
       this.http.get<{ meals: Meal[] }>(`https://www.themealdb.com/api/json/v1/1/lookup.php?i=${meal.idMeal}`)
     );
+
+    //forkJoin lets me run multiple HTTP requests
+    //  in parallel and wait  until they all complete,
+    // so I can process the results together.
 
     forkJoin(fetches).subscribe((results) => {
       this.savedMeals = results
@@ -69,10 +74,12 @@ export class SavedPage implements OnInit {
         }));
 
       this.savedCategories = [...new Set(this.savedMeals.map(m => m.strCategory).filter(Boolean))];
+
       this.filterByCategory();
     });
   }
 
+  // Shows number of x meals in y category
   getCategoryCount(category: string): number {
     return this.savedMeals.filter(m => m.strCategory === category).length;
   }
@@ -105,6 +112,7 @@ export class SavedPage implements OnInit {
     return ingredients;
   }
 
+  // Removes a meal from list and removes ui instantly so no blank gap.
   async removeFromSaved(mealId: string) {
     this.savedMeals = this.savedMeals.filter(m => m.idMeal !== mealId);
     this.filteredMeals = this.savedMeals.filter(
@@ -115,11 +123,14 @@ export class SavedPage implements OnInit {
     localStorage.setItem('ezchef-favourites', JSON.stringify(updated));
 
     this.savedCategories = [...new Set(this.savedMeals.map(m => m.strCategory).filter(Boolean))];
+
+    // Reset filter if current category no longer exists
     if (!this.savedCategories.includes(this.selectedCategory)) {
       this.selectedCategory = '';
       this.filteredMeals = this.savedMeals;
     }
 
+    // Shows toast on android/desktop
     if (Capacitor.isNativePlatform()) {
       await Toast.show({ text: 'Recipe removed', duration: 'short' });
     } else {
@@ -135,14 +146,7 @@ export class SavedPage implements OnInit {
     await modal.present();
   }
 
-  clearAll() {
-    localStorage.removeItem('ezchef-favourites');
-    this.savedMeals = [];
-    this.filteredMeals = [];
-    this.savedCategories = [];
-    this.selectedCategory = '';
-  }
-
+  // Opens a modal to show a shopping list for a meal,
   async generateShoppingListForMeal(meal: Meal) {
     const ingredients = this.getIngredients(meal);
 

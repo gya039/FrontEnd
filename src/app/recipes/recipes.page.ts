@@ -24,8 +24,8 @@ export class RecipesPage implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.getCategories();
-    this.loadMeals();
+    this.getCategories(); 
+    this.loadMeals();   
   }
 
   getCategories() {
@@ -59,12 +59,11 @@ export class RecipesPage implements OnInit {
     await modal.present();
   }
 
+  // Saves or removes a meal from favourites and shows toast on android/desktop
   async toggleSave(meal: any) {
     const saved = JSON.parse(localStorage.getItem('ezchef-favourites') || '[]');
     const exists = saved.find((r: any) => r.idMeal === meal.idMeal);
 
-    // Toasts but couldnt get android studio/electron working to test used 
-    // used a popup to test so hope it works
     if (exists) {
       const updated = saved.filter((r: any) => r.idMeal !== meal.idMeal);
       localStorage.setItem('ezchef-favourites', JSON.stringify(updated));
@@ -76,6 +75,7 @@ export class RecipesPage implements OnInit {
     }
   }
 
+  // Returns true if a meal is already in favourites
   isSaved(idMeal: string): boolean {
     const saved = JSON.parse(localStorage.getItem('ezchef-favourites') || '[]');
     return saved.some((r: any) => r.idMeal === idMeal);

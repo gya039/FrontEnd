@@ -37,7 +37,10 @@ export class HomePage implements OnInit {
       const saved = localStorage.getItem('ezchef-favourites');
       if (saved) {
         const parsed = JSON.parse(saved);
+
         if (Array.isArray(parsed) && parsed.length > 0) {
+          
+          // Show most recent 5 saved meals
           this.recentSaved = parsed.slice(-5).reverse();
 
           const today = new Date().toDateString();
@@ -69,11 +72,13 @@ export class HomePage implements OnInit {
     }
   }
 
+  // Picks a random cooking tip on each page load
   private setRandomCookingTip() {
     const index = Math.floor(Math.random() * this.cookingTips.length);
     this.cookingTipOfTheDay = this.cookingTips[index];
   }
 
+  // Loads full meal details from TheMealDB using the given ID
   async fetchMealDetails(idMeal: string): Promise<any> {
     try {
       const res: any = await this.http
@@ -86,14 +91,13 @@ export class HomePage implements OnInit {
     }
   }
 
+  // Opens a modal to show full recipe and video tutorial
   async openRecipeModal(idMeal: string | undefined) {
     if (!idMeal) return;
 
     const modal = await this.modalCtrl.create({
       component: RecipeModalComponent,
-      componentProps: {
-        mealId: idMeal,
-      },
+      componentProps: { mealId: idMeal },
     });
 
     await modal.present();

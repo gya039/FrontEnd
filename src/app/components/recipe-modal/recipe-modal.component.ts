@@ -27,17 +27,24 @@ export class RecipeModalComponent implements OnInit {
     this.modalCtrl.dismiss();
   }
 
+  // Extracts a formatted list of ingredients with measurements
   getIngredients(): string[] {
     if (!this.meal) return [];
     const ingredients: string[] = [];
+
     for (let i = 1; i <= 20; i++) {
       const ingredient = this.meal[`strIngredient${i}`];
       const measure = this.meal[`strMeasure${i}`];
+
       if (ingredient && ingredient.trim()) {
         ingredients.push(`${measure?.trim()} ${ingredient.trim()}`);
       }
     }
+
     return ingredients;
   }
-  
+
 }
+
+
+
